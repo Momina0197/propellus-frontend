@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 const VisaIntegrationSection = () => {
   return (
@@ -32,14 +33,14 @@ const VisaIntegrationSection = () => {
             </div>
           </div>
           <div className="w-full lg:w-1/2 rounded-2xl overflow-hidden  transform hover:rotate-0 transition-transform duration-300 ease-in-out">
-            <img src="/images/frame1.png" alt="Propellus Dashboard" className="w-full h-auto object-cover"/>
+            <Image src="/images/frame1.png" alt="Propellus Dashboard" width={600} height={400} className="w-full h-auto object-cover"/>
           </div>
         </div>
         
         {/* Bottom Section */}
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           <div className="w-full lg:w-1/2 rounded-2xl overflow-hidden   transform  hover:rotate-0 transition-transform duration-300 ease-in-out">
-            <img src="/images/frame2.png" alt="Propellus Analytics" className="w-full h-auto object-cover"/>
+            <Image src="/images/frame2.png" alt="Propellus Analytics" width={600} height={400} className="w-full h-auto object-cover"/>
           </div>
           <div className="w-full lg:w-1/2">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4">

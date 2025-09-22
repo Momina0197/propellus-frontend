@@ -13,7 +13,7 @@ const TravelBusinessSections = () => {
     const fetchLandingData = async () => {
       try {
         const response = await fetch("/api/strapi-data");
-        const data = await response.json();
+        const data: LandingPageData = await response.json();
         console.log(
           "Landing page data received in TravelBusinessSections:",
           data

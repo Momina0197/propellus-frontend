@@ -65,14 +65,18 @@ const InvestInPropellus = () => {
   return (
     <div className="relative py-12 px-4 md:px-8 overflow-hidden bg-[#1C3F5D]">
       {/* Background vectors */}
-      <img
+      <Image
         src="/images/formleftVector.png"
         alt="Left background shading"
+        width={800}
+        height={600}
         className="absolute top-0 left-0 w-2/4 h-full object-cover z-10 opacity-100"
       />
-      <img
+      <Image
         src="/images/formrightVector.png"
         alt="Right background shading"
+        width={400}
+        height={600}
         className="absolute bottom-0 right-0 w-1/4 h-full object-cover z-0 opacity-120"
       />
 

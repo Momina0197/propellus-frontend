@@ -92,6 +92,7 @@ export interface LandingPageData {
     heading: string;
     image: MediaItem[];
   };
+  error?: string;
 }
 
 export interface RichTextChild {

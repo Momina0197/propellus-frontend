@@ -21,7 +21,8 @@ interface InvestorsHero {
 }
 
 interface InvestorsData {
-  investorsHero: InvestorsHero;
+  investorsHero?: InvestorsHero;
+  error?: string;
 }
 
 const PropellusProblem = () => {

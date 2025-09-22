@@ -23,7 +23,8 @@ interface Approach {
 }
 
 interface InvestorsData {
-  approach: Approach;
+  approach?: Approach;
+  error?: string;
 }
 
 const PropellusApproach = () => {

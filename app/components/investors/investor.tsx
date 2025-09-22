@@ -2,43 +2,38 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { RichTextBlock, RichTextChild, MediaItem } from "../../types/strapi";
 
 // ✅ Types
 interface InvestorsHeading {
   heading1: string;
   heading2: string;
-  description: string | any[];
+  description: string | RichTextBlock[];
 }
 
 interface Investor {
   author_name: string;
-  author_info: string | any[];
+  author_info: string | RichTextBlock[];
   linkedIn_url: string;
-  profile?: {
-    url: string;
-    alternativeText?: string;
-    formats?: {
-      small?: { url: string };
-      thumbnail?: { url: string };
-    };
-  };
+  profile?: MediaItem;
 }
 
 interface InvestorsData {
   investorsheading: InvestorsHeading[];
   investor: Investor[];
+  error?: string;
 }
 
 // ✅ Helper function to safely extract Strapi rich-text or string
-function formatRichText(content: string | any[]): string {
+function formatRichText(content: string | RichTextBlock[]): string {
   if (typeof content === "string") return content;
 
   if (Array.isArray(content)) {
     return content
-      .map((block: any) => {
+      .map((block: RichTextBlock) => {
         if (typeof block === "string") return block;
         if (block.children) {
-          return block.children.map((child: any) => child.text).join(" ");
+          return block.children.map((child: RichTextChild) => child.text || "").join(" ");
         }
         return "";
       })

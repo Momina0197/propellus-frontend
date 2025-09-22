@@ -4,18 +4,24 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { TestimonialData } from '../../types/strapi';
+import { TestimonialData, LandingPageData, MediaItem } from '../../types/strapi';
+
+interface TravelAgentLoveData {
+  heading: string;
+  image1?: MediaItem;
+  image2?: MediaItem;
+}
 
 const TravelAgentLove = () => {
   const [testimonial, setTestimonial] = useState<TestimonialData | null>(null);
-  const [travelAgentLoveData, setTravelAgentLoveData] = useState<any>(null);
+  const [travelAgentLoveData, setTravelAgentLoveData] = useState<TravelAgentLoveData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTestimonial = async () => {
       try {
         const response = await fetch('/api/strapi-data');
-        const data = await response.json();
+        const data: LandingPageData = await response.json();
         console.log('TravelAgentLove data received:', data);
         
         // Check if we got an error response from the API

@@ -14,7 +14,8 @@ interface VisaProcess {
 }
 
 interface TravelAgentData {
-  visaprocess: VisaProcess;
+  visaprocess?: VisaProcess;
+  error?: string;
 }
 
 const VisaProcessingSection = () => {

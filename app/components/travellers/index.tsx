@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import { TestimonialData } from '../../types/strapi';
+import { TestimonialData, LandingPageData } from '../../types/strapi';
 
 interface TestimonialWithBg extends TestimonialData {
   bgColor: string;
@@ -20,7 +20,7 @@ const TestimonialsSection = () => {
     const fetchTestimonials = async () => {
       try {
         const response = await fetch('/api/strapi-data');
-        const data = await response.json();
+        const data: LandingPageData = await response.json();
         console.log('Testimonials data received:', data);
         
         // Check if we got an error response from the API

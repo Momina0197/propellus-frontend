@@ -30,7 +30,6 @@ interface TravelAgentData {
 const BenefitsFeatures = () => {
   const [data, setData] = useState<TravelAgentData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,7 +42,6 @@ const BenefitsFeatures = () => {
         setData(fetchedData);
       } catch (err) {
         console.error('Error fetching data:', err);
-        setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);
       }

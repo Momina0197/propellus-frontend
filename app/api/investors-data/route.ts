@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { MediaItem } from "../../types/strapi";
 
 const STRAPI_URL =
   process.env.STRAPI_URL ||
@@ -10,16 +11,22 @@ const STRAPI_API_KEY = process.env.STRAPI_API_KEY;
 interface InvestorsHero {
   heading: string;
   description: string;
-  image?: any;
+  image?: MediaItem;
 }
 
 interface Approach {
   title1: string;
   title2: string;
   description: string;
-  image1?: any;
-  image2?: any;
-  image3?: any;
+  image1?: MediaItem;
+  image2?: MediaItem;
+  image3?: MediaItem;
+}
+
+interface InvestorsHeadingItem {
+  heading1: string;
+  heading2: string;
+  description: string;
 }
 
 interface InvestorsHeading {
@@ -28,11 +35,18 @@ interface InvestorsHeading {
   description: string;
 }
 
+interface InvestorItem {
+  author_name: string;
+  author_info: string | unknown[];
+  linkedIn_url: string;
+  profile?: MediaItem;
+}
+
 interface Investor {
   author_name: string;
-  author_info: string | any[];
+  author_info: string | unknown[];
   linkedIn_url: string;
-  profile?: any; // image
+  profile?: MediaItem; // image
 }
 
 interface InvestorsData {
@@ -43,7 +57,7 @@ interface InvestorsData {
   form: {
     heading1: string;
     heading2: string;
-    image?: any;
+    image?: MediaItem;
   } | null;
 }
 
@@ -118,14 +132,14 @@ export async function GET() {
       },
       // ✅ Map array instead of treating as object
       investorsheading: rawData.investorsheading
-        ? rawData.investorsheading.map((item: any) => ({
+        ? rawData.investorsheading.map((item: InvestorsHeadingItem) => ({
             heading1: item.heading1 || "",
             heading2: item.heading2 || "",
             description: item.description || "",
           }))
         : [],
       investor: rawData.investor
-        ? rawData.investor.map((inv: any) => ({
+        ? rawData.investor.map((inv: InvestorItem) => ({
             author_name: inv.author_name || "",
             author_info: inv.author_info || [],
             linkedIn_url: inv.linkedIn_url || "",

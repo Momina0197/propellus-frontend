@@ -18,8 +18,13 @@ interface CustomDropdownProps {
   value: string;
 }
 
+interface HerosectionData {
+  heading1: string;
+  heading2: string;
+}
+
 const HeroSection = () => {
-  const [herosection, setHerosection] = useState<any>(null);
+  const [herosection, setHerosection] = useState<HerosectionData | null>(null);
 
   // State with explicit type
   const [dropdowns, setDropdowns] = useState<

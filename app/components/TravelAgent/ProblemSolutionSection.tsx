@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { FileText, Database, Frown, Upload, Bot, Globe } from "lucide-react";
+import { MediaItem } from "../../types/strapi";
 
 // Types matching your API
 interface TravelAgentProblem {
@@ -12,7 +13,7 @@ interface TravelAgentProblem {
   description2: string;
   subheading3: string;
   description3: string;
-  image?: any;
+  image?: MediaItem;
 }
 
 interface Solution {
@@ -23,7 +24,7 @@ interface Solution {
   description2: string;
   subheading3: string;
   description3: string;
-  image?: any;
+  image?: MediaItem;
 }
 
 interface TravelAgentData {
@@ -56,9 +57,9 @@ const ProblemSolutionSection = () => {
   }, []);
 
   // Helper function to get image URL from Strapi data
-  const getImageUrl = (imageData: any) => {
+  const getImageUrl = (imageData: MediaItem | undefined) => {
     if (!imageData) return null;
-    
+
     // Handle different possible structures from Strapi
     if (imageData.url) {
       // If URL starts with /, prepend the Strapi base URL
@@ -66,9 +67,6 @@ const ProblemSolutionSection = () => {
         return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337'}${imageData.url}`;
       }
       return imageData.url;
-    }
-    if (imageData.data?.attributes?.url) {
-      return imageData.data.attributes.url;
     }
     return null;
   };

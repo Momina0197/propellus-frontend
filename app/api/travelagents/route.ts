@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { MediaItem, RichTextBlock } from "../../types/strapi";
 
 const STRAPI_URL =
   process.env.STRAPI_URL ||
@@ -16,7 +17,7 @@ interface Hero {
 interface VisaProcess {
   heading1: string;
   description: string;
-  image?: any;
+  image?: MediaItem;
 }
 
 interface TravelAgentProblem {
@@ -27,7 +28,7 @@ interface TravelAgentProblem {
   description2: string;
   subheading3: string;
   description3: string;
-  image?: any;
+  image?: MediaItem;
 }
 
 interface Solution {
@@ -38,11 +39,16 @@ interface Solution {
   description2: string;
   subheading3: string;
   description3: string;
-  image?: any;
+  image?: MediaItem;
 }
 
 interface Heading {
   mainheading: string;
+}
+
+interface FeatureSectionItem {
+  heading: string;
+  description: RichTextBlock[];
 }
 
 interface FeatureSection {
@@ -199,7 +205,7 @@ export async function GET() {
         mainheading: firstItem.heading?.mainheading || "",
       },
       featureSection:
-        firstItem.featureSeaction?.map((item: any) => ({
+        firstItem.featureSeaction?.map((item: FeatureSectionItem) => ({
           heading: item.heading || "",
           description: item.description?.[0]?.children?.[0]?.text || "",
         })) || [],
