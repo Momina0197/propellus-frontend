@@ -14,9 +14,8 @@ const MainPage = () => {
       <Navbar />
       <HeroSection />
       <VisaApplicationSection />
-      <TravelBusinessSections />
       <TestimonialsSection />
-
+      <TravelBusinessSections/>
       <Footer />
     </div>
   );

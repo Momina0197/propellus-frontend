@@ -164,3 +164,25 @@ export interface StrapiData {
   travelAgents: SectionData;
   otas: SectionData;
 }
+
+export interface TermsSection {
+  section_heading: string;
+  section_detail: RichTextBlock[]; 
+}
+
+export interface TermsDataRaw {
+  id: number;
+  title: string;
+  last_update_date: string;
+  intro: RichTextBlock[];
+  sections?: TermsSection[];
+}
+
+export interface TermsOfServiceResponse {
+  id: number;
+  documentId: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  Terms: TermsDataRaw[];
+}

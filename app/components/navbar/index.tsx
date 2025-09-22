@@ -143,7 +143,6 @@ const Navbar = () => {
               OTAs
             </Link>
           </div>
-
           {/* Help Button */}
           <div className="mb-6">
             <button className="flex items-center text-[#1C3F5D] hover:text-[#1C3F5D] w-full py-2">
@@ -171,7 +170,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-    </>
+        </>
   );
 };
 

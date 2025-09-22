@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -111,8 +110,7 @@ const TravelBusinessSections = () => {
                 </button>
                 <Link
                   href="/learn-more"
-                  className="border border-gray-300 hover:border-gray-400 text-gray-600 hover:text-gray-900 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 inline-flex items-center justify-center"
-                >
+                  className="border border-gray-300 hover:border-gray-400 text-gray-600 hover:text-gray-900 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 inline-flex items-center justify-center">
                   Learn more
                 </Link>
               </div>

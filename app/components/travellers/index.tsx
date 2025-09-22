@@ -1,17 +1,20 @@
-"use client";
-
-import React, { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
-import { TravellerData } from '../../types/strapi';
+import React, { useState, useEffect } from "react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
+import { TravellerData } from "../../types/strapi";
 
 const TestimonialsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [travellers, setTravellers] = useState<TravellerData[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/strapi-data')
-      .then(res => res.json())
-      .then(data => setTravellers(data.travellers || []));
+    fetch("/api/strapi-data")
+      .then((res) => res.json())
+      .then((data) => {
+        setTravellers(data.travellers || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const testimonials = travellers.map((traveller, index) => ({
@@ -19,20 +22,32 @@ const TestimonialsSection = () => {
     text: traveller.description,
     author: traveller.travellername,
     location: traveller.country,
-    bgColor: ['bg-teal-100', 'bg-gray-100', 'bg-orange-100'][index % 3]
+    bgColor: ["bg-teal-100", "bg-gray-100", "bg-orange-100"][index % 3],
   }));
 
   const nextSlide = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex >= testimonials.length - 2 ? 0 : prevIndex + 1
+    setCurrentIndex((prevIndex) =>
+      prevIndex >= testimonials.length - 1 ? 0 : prevIndex + 1
     );
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex <= 0 ? testimonials.length - 2 : prevIndex - 1
+    setCurrentIndex((prevIndex) =>
+      prevIndex <= 0 ? testimonials.length - 1 : prevIndex - 1
     );
   };
+
+  if (loading) {
+    return (
+      <div className="bg-white py-16 px-6 sm:px-8 lg:px-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-center items-center h-64">
+            <div className="text-gray-500">Loading testimonials...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white py-16 px-4">
@@ -43,34 +58,44 @@ const TestimonialsSection = () => {
             Why Travellers Love Propellus
           </h2>
           <div className="flex gap-2">
-            <button 
+            <button
               onClick={prevSlide}
-              className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+              className="w-10 h-10 rounded-full border border-gray-300 hover:border-gray-400 flex items-center justify-center transition-colors duration-200 group"
+              aria-label="Previous testimonials"
+              disabled={testimonials.length === 0}
             >
-              <ChevronLeft className="w-5 h-5 text-gray-700" />
+              <ChevronLeft
+                size={20}
+                className="text-gray-600 group-hover:text-gray-800"
+              />
             </button>
-            <button 
+            <button
               onClick={nextSlide}
-              className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+              className="w-10 h-10 rounded-full border border-gray-300 hover:border-gray-400 flex items-center justify-center transition-colors duration-200 group"
+              aria-label="Next testimonials"
+              disabled={testimonials.length === 0}
             >
-              <ChevronRight className="w-5 h-5 text-gray-700" />
+              <ChevronRight
+                size={20}
+                className="text-gray-600 group-hover:text-gray-800"
+              />
             </button>
           </div>
         </div>
 
-        {/* Testimonials Carousel Container */}
+        {/* Sliding Testimonials */}
         <div className="relative overflow-hidden w-full">
-          <div 
+          <div
             className="flex gap-6 transition-transform duration-500 ease-in-out"
             style={{
-              transform: `translateX(-${currentIndex * 320}px)`,
+              transform: `translateX(-${currentIndex * 520}px)`,
             }}
           >
-            {testimonials.map((testimonial, index) => (
+            {testimonials.map((testimonial) => (
               <div
                 key={testimonial.id}
                 className={`${testimonial.bgColor} rounded-xl p-8 flex-shrink-0`}
-                style={{ width: '500px', minHeight: '200px' }}
+                style={{ width: "500px", minHeight: "200px" }}
               >
                 <p className="text-gray-700 text-base leading-relaxed mb-8">
                   {testimonial.text}
@@ -90,12 +115,12 @@ const TestimonialsSection = () => {
 
         {/* Dots indicator */}
         <div className="flex justify-center mt-8 gap-2">
-          {Array.from({ length: testimonials.length - 1 }).map((_, index) => (
+          {testimonials.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`w-2 h-2 rounded-full transition-colors duration-200 ${
-                currentIndex === index ? 'bg-gray-800' : 'bg-gray-300'
+                currentIndex === index ? "bg-gray-800" : "bg-gray-300"
               }`}
             />
           ))}

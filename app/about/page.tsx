@@ -93,7 +93,7 @@ const AboutUs = () => {
       <section className="mt-16 bg-[#ECEFF1] p-14 rounded-lg w-full mb-28">
         <div className="text-center max-w-4xl mx-auto">
           <h3 className="text-3xl md:text-[44px] text-gray-800 mb-4">
-            Creating Propellus&aposs Values
+            Creating Propellus's Values
           </h3>
           <div className="text-gray-800 text-[16px] md:text-[20px] ">
             <p>

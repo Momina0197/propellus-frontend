@@ -26,7 +26,6 @@ interface HerosectionData {
 const HeroSection = () => {
   const [herosection, setHerosection] = useState<HerosectionData | null>(null);
 
-  // State with explicit type
   const [dropdowns, setDropdowns] = useState<
     Record<DropdownType, DropdownState>
   >({
@@ -87,7 +86,7 @@ const HeroSection = () => {
     fetchHerosection();
   }, []);
 
-  // Toggle dropdown with typed parameter
+  // Toggle dropdown
   const toggleDropdown = (type: DropdownType) => {
     setDropdowns((prev) => ({
       ...prev,
@@ -98,7 +97,7 @@ const HeroSection = () => {
     }));
   };
 
-  // Select option with typed parameters
+  // Select option
   const selectOption = (type: DropdownType, value: string) => {
     setDropdowns((prev) => ({
       ...prev,
@@ -109,19 +108,19 @@ const HeroSection = () => {
     }));
   };
 
-  // CustomDropdown component with typed props
+  // CustomDropdown component
   const CustomDropdown: React.FC<CustomDropdownProps> = ({
     label,
     type,
     options,
     value,
   }) => (
-    <div className="space-y-2 border-r-[1px] broder-gray-200 relative">
-      <label className="text-lg text-black font-medium">{label}</label>
+    <div className="space-y-2 relative">
+      <label className="text-sm font-medium text-gray-700">{label}</label>
       <div className="relative">
         <button
           onClick={() => toggleDropdown(type)}
-          className={`w-full p-3 rounded-md bg-white text-left focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent ${
+          className={`w-full p-3 border border-gray-300 rounded-md bg-white text-left focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent ${
             value === "Please Select" ? "text-gray-500" : "text-gray-700"
           }`}
         >
@@ -161,7 +160,7 @@ const HeroSection = () => {
     <div className="bg-gradient-to-r from-[#009BA2] to-[#5CE1E6] flex flex-col">
       {/* Hero Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-        {/* Main Heading (heading1 only) */}
+        {/* Main Heading (from Strapi) */}
         <div className="text-center mb-12">
           <h1 className="text-white text-[28px] md:text-[30px] lg:text-[40px] font-normal leading-tight">
             {herosection?.heading1 || "UAE Visa application for"}
@@ -169,8 +168,8 @@ const HeroSection = () => {
         </div>
 
         {/* Search Form */}
-        <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-3 mb-20">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <div className="w-full max-w-5xl bg-white rounded-lg shadow-lg p-6 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <CustomDropdown
               label="Destination"
               type="destination"
@@ -189,22 +188,21 @@ const HeroSection = () => {
               options={nationalityOptions}
               value={dropdowns.nationality.selected}
             />
-            {/* Search Button */}
-            <div className="mt-6 flex justify-end">
-              <button className="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-8 rounded-md transition-colors duration-200">
-                Search
-              </button>
-            </div>
+          </div>
+
+          {/* Search Button */}
+          <div className="mt-6 flex justify-end">
+            <button className="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-8 rounded-md transition-colors duration-200">
+              Search
+            </button>
           </div>
         </div>
 
         {/* Trusted By Section */}
         <div className="text-center">
-          {/* Heading2 from API replaces hardcoded text */}
           <h2 className="text-black text-[20px] md:text-[28px] font-medium mb-8">
             {herosection?.heading2 || "Trusted by Leading Travel Agencies"}
           </h2>
-
           <div className="flex flex-wrap justify-center items-center">
             <Image
               src={"/logos.svg"}

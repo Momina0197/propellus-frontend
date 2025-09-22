@@ -7,17 +7,26 @@ const STRAPI_URL =
   "http://127.0.0.1:1337";
 const STRAPI_API_KEY = process.env.STRAPI_API_KEY;
 
+<<<<<<< HEAD
 // Types for the structure
 interface InvestorsHero {
   heading: string;
   description: string;
   image?: MediaItem;
+=======
+// Types for the new structure
+interface InvestorsHero {
+  heading: string;
+  description: string;
+  image?: any;
+>>>>>>> 7b914b8 (Strapi work)
 }
 
 interface Approach {
   title1: string;
   title2: string;
   description: string;
+<<<<<<< HEAD
   image1?: MediaItem;
   image2?: MediaItem;
   image3?: MediaItem;
@@ -47,11 +56,17 @@ interface Investor {
   author_info: string | unknown[];
   linkedIn_url: string;
   profile?: MediaItem; // image
+=======
+  image1?: any;
+  image2?: any;
+  image3?: any;
+>>>>>>> 7b914b8 (Strapi work)
 }
 
 interface InvestorsData {
   investorsHero: InvestorsHero;
   approach: Approach;
+<<<<<<< HEAD
   investorsheading: InvestorsHeading[]; // ✅ array not object
   investor: Investor[];
   form: {
@@ -59,6 +74,8 @@ interface InvestorsData {
     heading2: string;
     image?: MediaItem;
   } | null;
+=======
+>>>>>>> 7b914b8 (Strapi work)
 }
 
 export async function GET() {
@@ -74,8 +91,13 @@ export async function GET() {
       headers["Authorization"] = `Bearer ${STRAPI_API_KEY}`;
     }
 
+<<<<<<< HEAD
   // Fetch from investors endpoint with all components populated (including form)
   const fullUrl = `${STRAPI_URL}/api/investors?populate[investorsHero][populate]=*&populate[approach][populate]=*&populate[investorsheading][populate]=*&populate[investor][populate]=*&populate[form][populate]=*`;
+=======
+    // Fetch from investors endpoint with components populated
+    const fullUrl = `${STRAPI_URL}/api/investors?populate[investorsHero][populate]=*&populate[approach][populate]=*`;
+>>>>>>> 7b914b8 (Strapi work)
     console.log("Full URL:", fullUrl);
 
     const response = await fetch(fullUrl, {
@@ -84,10 +106,23 @@ export async function GET() {
     });
 
     console.log("Response status:", response.status);
+<<<<<<< HEAD
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`Strapi API error: ${response.status} ${response.statusText}`);
+=======
+    console.log(
+      "Response headers:",
+      Object.fromEntries(response.headers.entries())
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        `Strapi API error: ${response.status} ${response.statusText}`
+      );
+>>>>>>> 7b914b8 (Strapi work)
       console.error("Error response body:", errorText);
 
       return NextResponse.json(
@@ -114,12 +149,20 @@ export async function GET() {
     const rawData = responseData.data[0];
     console.log("Raw investors data:", JSON.stringify(rawData, null, 2));
 
+<<<<<<< HEAD
     // ✅ Transform the Strapi data structure
     const transformedData: InvestorsData = {
       investorsHero: {
         heading: rawData.investorsHero?.heading || "",
         // Strapi field is "Description" (capital D)
         description: rawData.investorsHero?.Description || "",
+=======
+    // Transform the Strapi data structure to match our expected format
+    const transformedData: InvestorsData = {
+      investorsHero: {
+        heading: rawData.investorsHero?.heading || "",
+        description: rawData.investorsHero?.description || "",
+>>>>>>> 7b914b8 (Strapi work)
         image: rawData.investorsHero?.image || undefined,
       },
       approach: {
@@ -129,6 +172,7 @@ export async function GET() {
         image1: rawData.approach?.image1 || undefined,
         image2: rawData.approach?.image2 || undefined,
         image3: rawData.approach?.image3 || undefined,
+<<<<<<< HEAD
       },
       // ✅ Map array instead of treating as object
       investorsheading: rawData.investorsheading
@@ -154,6 +198,9 @@ export async function GET() {
             image: rawData.form.image || undefined,
           }
         : null,
+=======
+      }
+>>>>>>> 7b914b8 (Strapi work)
     };
 
     console.log("Transformed investors data:", JSON.stringify(transformedData, null, 2));

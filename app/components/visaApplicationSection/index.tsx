@@ -37,6 +37,7 @@ const VisaApplicationPage = () => {
     <div className="min-h-screen bg-gray-50 py-12 px-6 sm:px-8 lg:px-12">
       <div className="max-w-full mx-auto">
         {/* Header Section */}
+        <div className="text-center ">
         <div className="text-center">
           <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
             FOR TRAVELERS
@@ -65,6 +66,7 @@ const VisaApplicationPage = () => {
               </div>
             ))}
           </div>
+        </div>
         </div>
 
         {/* Main Application Interface with blue border */}
