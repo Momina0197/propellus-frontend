@@ -59,7 +59,7 @@ export async function GET() {
       headers["Authorization"] = `Bearer ${STRAPI_API_KEY}`;
     }
 
-    const fullUrl = `${STRAPI_URL}/api/landing-pages?populate%5Bgrow%5D%5Bpopulate%5D=*&populate%5Botas%5D%5Bpopulate%5D=*&populate%5Btravllerslove%5D%5Bpopulate%5D=*&populate%5BFAQS%5D%5Bpopulate%5D=*`;
+    const fullUrl = `${STRAPI_URL}/api/landing-pages?populate%5Bgrow%5D%5Bpopulate%5D=*&populate%5Botas%5D%5Bpopulate%5D=*&populate%5Btravllerslove%5D%5Bpopulate%5D=*&populate%5Bherosection%5D%5Bpopulate%5D=*&populate%5Bvisasection%5D%5Bpopulate%5D=*`;
     console.log("Full URL:", fullUrl);
 
     const response = await fetch(fullUrl, {
@@ -105,18 +105,18 @@ export async function GET() {
     console.log("Raw landing page data:", JSON.stringify(rawData, null, 2));
 
     // Transform the Strapi data structure to match our expected format
-     const transformedData: LandingPageData = {
+    const transformedData: LandingPageData = {
       travelAgents: rawData.grow && rawData.grow[0] ? {
         heading: rawData.grow[0].heading || "",
         Description: rawData.grow[0].description || [],
-        image: rawData.grow[0].image ? [rawData.grow[0].image] : [], // Convert single image to array
+        image: rawData.grow[0].image ? [rawData.grow[0].image] : [],
         bulletPoints: extractBulletPointsFromDescription(rawData.grow[0].description || [])
       } : undefined,
 
       otas: rawData.otas && rawData.otas[0] ? {
         heading: rawData.otas[0].heading || "",
         Description: rawData.otas[0].description || [],
-        image: rawData.otas[0].image ? [rawData.otas[0].image] : [], // Convert single image to array
+        image: rawData.otas[0].image ? [rawData.otas[0].image] : [],
         bulletPoints: extractBulletPointsFromDescription(rawData.otas[0].description || [])
       } : undefined,
 
@@ -127,10 +127,15 @@ export async function GET() {
         author_image: testimonial.author_image || undefined
       })) : [],
 
-      FAQS: rawData.FAQS ? rawData.FAQS.map((faq: any) => ({
-        question: faq.question || "",
-        answer: faq.answer || ""
-      })) : []
+      herosection: rawData.herosection ? {
+        heading1: rawData.herosection.heading1 || "",
+        heading2: rawData.herosection.heading2 || ""
+      } : undefined,
+
+      visasection: rawData.visasection ? {
+        heading: rawData.visasection.heading || "",
+        image: rawData.visasection.image ? [{ ...rawData.visasection.image, url: `${STRAPI_URL}${rawData.visasection.image.url}` }] : []
+      } : undefined,
     };
 
     console.log("Transformed landing page data:", JSON.stringify(transformedData, null, 2));

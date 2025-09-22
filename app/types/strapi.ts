@@ -84,6 +84,14 @@ export interface LandingPageData {
   travelAgents?: RawSectionData;
   otas?: RawSectionData;
   testimonials?: TestimonialData[];
+  herosection?: {
+    heading1: string;
+    heading2: string;
+  };
+  visasection?: {
+    heading: string;
+    image: MediaItem[];
+  };
 }
 
 export interface RichTextChild {

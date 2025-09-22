@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 
@@ -19,6 +19,8 @@ interface CustomDropdownProps {
 }
 
 const HeroSection = () => {
+  const [herosection, setHerosection] = useState<any>(null);
+
   // State with explicit type
   const [dropdowns, setDropdowns] = useState<
     Record<DropdownType, DropdownState>
@@ -64,6 +66,22 @@ const HeroSection = () => {
     "French",
   ];
 
+  useEffect(() => {
+    const fetchHerosection = async () => {
+      try {
+        const response = await fetch("/api/strapi-data");
+        const data = await response.json();
+        if (data.herosection) {
+          setHerosection(data.herosection);
+        }
+      } catch (error) {
+        console.error("Error fetching herosection data:", error);
+      }
+    };
+
+    fetchHerosection();
+  }, []);
+
   // Toggle dropdown with typed parameter
   const toggleDropdown = (type: DropdownType) => {
     setDropdowns((prev) => ({
@@ -93,9 +111,9 @@ const HeroSection = () => {
     options,
     value,
   }) => (
-    <div className="space-y-2 border-r-[1px] broder-gray-200  relative">
+    <div className="space-y-2 border-r-[1px] broder-gray-200 relative">
       <label className="text-lg text-black font-medium">{label}</label>
-      <div className="relative  ">
+      <div className="relative">
         <button
           onClick={() => toggleDropdown(type)}
           className={`w-full p-3 rounded-md bg-white text-left focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent ${
@@ -135,22 +153,19 @@ const HeroSection = () => {
   );
 
   return (
-    <div className="bg-gradient-to-r from-[#009BA2] to-[#5CE1E6]  flex flex-col">
+    <div className="bg-gradient-to-r from-[#009BA2] to-[#5CE1E6] flex flex-col">
       {/* Hero Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-        {/* Main Heading */}
+        {/* Main Heading (heading1 only) */}
         <div className="text-center mb-12">
           <h1 className="text-white text-[28px] md:text-[30px] lg:text-[40px] font-normal leading-tight">
-            <span className="font-bold"> UAE Visa</span> application for{" "}
-            <span className="font-bold">Indian National</span> from{" "}
-            <span className="font-bold">UK</span>
+            {herosection?.heading1 || "UAE Visa application for"}
           </h1>
         </div>
 
         {/* Search Form */}
         <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-3 mb-20">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-            {/* Use CustomDropdown for each dropdown */}
             <CustomDropdown
               label="Destination"
               type="destination"
@@ -180,13 +195,15 @@ const HeroSection = () => {
 
         {/* Trusted By Section */}
         <div className="text-center">
-          <h2 className="text-black text-[18px] md:text-[24px] font-normal mb-8 tracking-wide">
-            TRUSTED BY LEADING TRAVEL AGENCIES
+          {/* Heading2 from API replaces hardcoded text */}
+          <h2 className="text-black text-[20px] md:text-[28px] font-medium mb-8">
+            {herosection?.heading2 || "Trusted by Leading Travel Agencies"}
           </h2>
-          <div className="flex flex-wrap justify-center items-center ">
+
+          <div className="flex flex-wrap justify-center items-center">
             <Image
               src={"/logos.svg"}
-              alt="Logo 1"
+              alt="Partner Logos"
               width={120}
               height={40}
               className="object-contain w-full h-auto"
