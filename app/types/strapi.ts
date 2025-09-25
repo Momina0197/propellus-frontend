@@ -80,6 +80,12 @@ export interface TestimonialData {
   author_image?: MediaItem;
 }
 
+export interface TravellerData {
+  description: string;
+  travellername: string;
+  country: string;
+}
+
 export interface LandingPageData {
   travelAgents?: RawSectionData;
   otas?: RawSectionData;
@@ -92,6 +98,7 @@ export interface LandingPageData {
     heading: string;
     image: MediaItem[];
   };
+  travellers?: TravellerData[];
   error?: string;
 }
 

@@ -48,9 +48,6 @@ function extractTextFromDescription(description: RichTextBlock[]): string {
 
 export async function GET() {
   try {
-    console.log("Attempting to fetch from Strapi URL:", STRAPI_URL);
-    console.log("Using API Key:", STRAPI_API_KEY ? "Yes" : "No");
-
     const headers: HeadersInit = {
       "Content-Type": "application/json",
     };
@@ -59,27 +56,15 @@ export async function GET() {
       headers["Authorization"] = `Bearer ${STRAPI_API_KEY}`;
     }
 
-    const fullUrl = `${STRAPI_URL}/api/landing-pages?populate%5Bgrow%5D%5Bpopulate%5D=*&populate%5Botas%5D%5Bpopulate%5D=*&populate%5Btravllerslove%5D%5Bpopulate%5D=*&populate%5Bherosection%5D%5Bpopulate%5D=*&populate%5Bvisasection%5D%5Bpopulate%5D=*`;
-    console.log("Full URL:", fullUrl);
+    const fullUrl = `${STRAPI_URL}/api/landing-pages?populate%5Bgrow%5D%5Bpopulate%5D=*&populate%5Botas%5D%5Bpopulate%5D=*&populate%5Btravllerslove%5D%5Bpopulate%5D=*&populate%5Bherosection%5D%5Bpopulate%5D=*&populate%5Bvisasection%5D%5Bpopulate%5D=*&populate%5Btravellers%5D%5Bpopulate%5D=*`;
 
     const response = await fetch(fullUrl, {
       headers,
       cache: "no-store", // Disable caching for debugging
     });
 
-    console.log("Response status:", response.status);
-    console.log(
-      "Response headers:",
-      Object.fromEntries(response.headers.entries())
-    );
-
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(
-        `Strapi API error: ${response.status} ${response.statusText}`
-      );
-      console.error("Error response body:", errorText);
-
       return NextResponse.json(
         {
           error: `Strapi API error: ${response.status} ${response.statusText}`,
@@ -91,10 +76,8 @@ export async function GET() {
     }
 
     const responseData = await response.json();
-    console.log("Full Strapi response:", JSON.stringify(responseData, null, 2));
 
     if (!responseData.data || !responseData.data[0]) {
-      console.error("No data field in Strapi response");
       return NextResponse.json(
         { error: "Invalid Strapi response structure - missing data field" },
         { status: 500 }
@@ -102,10 +85,15 @@ export async function GET() {
     }
 
     const rawData = responseData.data[0];
-    console.log("Raw landing page data:", JSON.stringify(rawData, null, 2));
 
     // Transform the Strapi data structure to match our expected format
-    const transformedData: LandingPageData = {
+    const transformedData: LandingPageData & {
+      travellers?: {
+        description: string;
+        travellername: string;
+        country: string;
+      }[];
+    } = {
       travelAgents: rawData.grow && rawData.grow[0] ? {
         heading: rawData.grow[0].heading || "",
         Description: rawData.grow[0].description || [],
@@ -136,14 +124,22 @@ export async function GET() {
         heading: rawData.visasection.heading || "",
         image: rawData.visasection.image ? [{ ...rawData.visasection.image, url: `${STRAPI_URL}${rawData.visasection.image.url}` }] : []
       } : undefined,
-    };
 
-    console.log("Transformed landing page data:", JSON.stringify(transformedData, null, 2));
+    // ✅ New Travellers component
+travellers: rawData.travellers
+  ? rawData.travellers.map((traveller: any) => ({
+      description: Array.isArray(traveller.description)
+        ? extractTextFromDescription(traveller.description)
+        : traveller.description || "",
+      travellername: traveller.travellername || "",
+      country: traveller.country || ""
+    }))
+  : [],
+
+    };
 
     return NextResponse.json(transformedData);
   } catch (error) {
-    console.error("Error fetching landing page data:", error);
-
     return NextResponse.json(
       {
         error: "Failed to fetch data from Strapi",
