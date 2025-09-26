@@ -1,10 +1,44 @@
+
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+interface Logo {
+  id: number;
+  logoImage: {
+    url: string;
+    name: string;
+  };
+}
+
+interface HeroSection {
+  title: any[];
+  intro: any[];
+  desc: string;
+  logos: Logo[];
+}
 
 export default function TravelVisaSection() {
+  const [hero, setHero] = useState<HeroSection | null>(null);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/otas", { cache: "no-store" });
+        if (!res.ok) throw new Error(`Failed: ${res.status}`);
+        const json = await res.json();
+        setHero(json?.data?.heroSection || null);
+      } catch (err) {
+        console.error("Failed to fetch OTAs data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -15,18 +49,24 @@ export default function TravelVisaSection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted:", form);
-    // Integrate API here
   };
 
+  if (loading) {
+    return <p className="text-center py-10">Loading...</p>;
+  }
+
+  if (!hero) {
+    return <p className="text-center py-10 text-red-500">No data found</p>;
+  }
+
   return (
-    <section className="relative w-full bg-white py-16 px-6 lg:px-20 overflow-hidden">
-      {/* Background Images */}
+    <section className="relative w-full bg-white overflow-hidden">
       <Image
         src="/images/Vector01.png"
         alt="Vector01"
         width={1000}
         height={1000}
-        className="absolute -bottom-100 left-90 z-0 opacity-90"
+        className="absolute top-0 right-0 z-0 opacity-90"
       />
       <Image
         src="/images/Vector02.png"
@@ -36,54 +76,37 @@ export default function TravelVisaSection() {
         className="absolute top-10 right-0 rotate-3 z-0 opacity-90"
       />
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-        {/* Left Section */}
-        <div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-snug">
-            Offer one-window travel & visa services within your platform
-          </h2>
-          <p className="mt-4 text-gray-600 text-lg">
-            Seamlessly integrate and offer automated visa processing services to
-            your customers with Propellus APIs
-          </p>
-          <p className="mt-6 text-sm text-gray-500">
-            TRUSTED BY LEADING TRAVEL AGENCIES
-          </p>
-          <div className="flex items-center gap-6 mt-4">
-            <Image
-              src="/images/image 147.png"
-              alt="wego"
-              width={80}
-              height={40}
-              className="opacity-50"
-            />
-            <Image
-              src="/images/image 146.png"
-              alt="aeg"
-              width={50}
-              height={40}
-              className="opacity-50"
-            />
-            <Image
-              src="/images/image 148.png"
-              alt="gozayaan"
-              width={100}
-              height={40}
-              className="opacity-50"
-            />
-          </div>
-        </div>
+      <div className="max-w-7xl mx-auto grid md:grid-cols-2 grid-cols-1 gap-8 lg:gap-16 xl:gap-20 items-center px-6 mb-22 lg:px-20 mt-22 relative z-10">
+  <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+    <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 leading-snug">
+      {hero.title?.[0]?.children?.[0]?.text}
+    </h2>
+    <p className="my-10 text-gray-600 text-lg">
+      {hero.intro?.[0]?.children?.[0]?.text}
+    </p>
+    <p className="text-sm text-gray-800 uppercase mb-3">{hero.desc}</p>
+    <div className="flex items-center gap-8 w-full justify-space-between justify-center lg:justify-start">
+      {hero.logos?.map((logo) => (
+        <Image
+          key={logo.id}
+          src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${logo.logoImage.url}`}
+          alt={logo.logoImage.name}
+          width={80}
+          height={50}
+          className="opacity-50 object-contain max-h-[50] max-w-[80] brightness-0"
+        />
+      ))}
+    </div>
+  </div>
 
-        {/* Right Section (Updated Form) */}
+
+        {/* Right Section - static form */}
         <div className="bg-white shadow-md border border-gray-200 rounded-lg p-6 w-full max-w-sm mx-auto text-center relative z-20">
-          {/* Centered Heading */}
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Talk to Founders
           </h3>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-3 text-left">
-            {/* Name + Email in one row */}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label
@@ -123,7 +146,6 @@ export default function TravelVisaSection() {
               </div>
             </div>
 
-            {/* Message */}
             <div>
               <label
                 htmlFor="message"
@@ -142,7 +164,6 @@ export default function TravelVisaSection() {
               />
             </div>
 
-            {/* Colored Button */}
             <button
               type="submit"
               className="w-full bg-[#1C3F5D] text-white text-sm font-medium py-2 rounded-md hover:opacity-90 transition"
@@ -151,7 +172,6 @@ export default function TravelVisaSection() {
             </button>
           </form>
 
-          {/* Terms Text Centered */}
           <p className="text-[11px] text-gray-500 mt-3 leading-snug text-center">
             By submitting this form, you are agreeing to Propellus{" "}
             <a href="#" className="underline">

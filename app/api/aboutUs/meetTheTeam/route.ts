@@ -8,7 +8,7 @@ export async function GET() {
     const headers: HeadersInit = { "Content-Type": "application/json" };
     if (STRAPI_API_KEY) headers["Authorization"] = `Bearer ${STRAPI_API_KEY}`;
 
-    const url = `${STRAPI_URL}/api/about-us?populate[aboutUs_heroSection][populate]=*`;
+    const url = `${STRAPI_URL}/api/about-us?populate[meet_the_team][populate]=*`;
     const res = await fetch(url, { headers, cache: "no-store" });
 
     if (!res.ok) {
@@ -19,13 +19,17 @@ export async function GET() {
     }
 
     const strapiData = await res.json();
-    
-    const heroSectionData = strapiData.data?.aboutUs_heroSection || [];
+    const teamData = strapiData.data?.meet_the_team || [];
 
-    return NextResponse.json({
-      data: heroSectionData
-    });
-    
+    // Convert relative URLs to absolute
+    const teamWithAbsoluteUrls = teamData.map((member: any) => ({
+      id: member.id,
+      title: member.title,
+      designation: member.designation,
+      imageUrl: STRAPI_URL + member.image.formats.thumbnail.url,
+    }));
+
+    return NextResponse.json({ data: teamWithAbsoluteUrls });
   } catch (err) {
     return NextResponse.json(
       { error: "Server error", details: (err as Error).message },

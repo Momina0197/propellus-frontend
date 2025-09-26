@@ -1,73 +1,105 @@
 "use client";
-
-import React from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
-const Section1: React.FC = () => {
-  return (
-    <div>
-      {/* Mission Section */}
-      <section className="max-w-[1250px] mx-auto mt-12 px-4">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-          <div>
-            <h2 className="text-xl text-[#6A6A6A] mb-2">Our Mission</h2>
-            <p className="text-3xl md:text-4xl lg:text-[44px] text-[#222222] leading-tight mb-6">
-              To make obtaining visas as seamless as booking a flight,
-              regardless of passport strength, by leading the world in one-click
-              visa solutions
-            </p>
-            <p className="text-lg md:text-[20px] text-[#6A6A6A]">
-              Our mission is to solve the visa challenges for weak passport
-              holders through AI-powered automation, helping 300 million
-              travelers move freely. We empower travel agents and partners to
-              scale, reduce costs, and unlock new revenue streams through
-              innovative solutions.
-            </p>
-          </div>
-          <div className="flex justify-center max-w-[600px] max-h-[420px]">
-            <Image
-              width={100}
-              height={100}
-              src="/images/passport.jpg"
-              alt="Mission illustration"
-              className="w-full max-w-[600px] h-auto object-cover rounded-lg shadow-lg"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Vision Section */}
-      <section className="max-w-[1250px] mx-auto mt-12 px-4">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-          <div className="flex justify-center order-2 md:order-1">
-            <Image
-              width={100}
-              height={100}
-              src="/images/vision.jpg"
-              alt="Vision illustration"
-              className="w-full max-w-[600px] h-auto object-cover rounded-lg shadow-lg"
-            />
-          </div>
-          <div className="order-1 md:order-2">
-            <h2 className="text-xl text-[#6A6A6A] mb-2">Vision Statement</h2>
-            <p className="text-3xl md:text-4xl lg:text-[44px] text-[#222222] leading-tight mb-6">
-              Reduce the gap between weak and strong passport holders&apos
-              travel experience
-            </p>
-            <div className="text-lg md:text-[20px] text-[#6A6A6A] space-y-4">
-              <p>
-                Help travel agents offer fully automated visa-processing
-                services to 300m travelers
-              </p>
-              <p>
-                One-click visa (Apple/Samsung Pay of visa processing services)
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
+type RichTextChild = { type: string; text?: string };
+type RichTextBlock = { type: string; children?: RichTextChild[] };
+type MissionSection = {
+  id: number;
+  title?: string;
+  heading?: RichTextBlock[];
+  desc?: RichTextBlock[];
+  image?: {
+    id: number;
+    url: string;
+    alternativeText?: string;
+    width?: number;
+    height?: number;
+    formats?: any;
+  };
 };
 
-export default Section1;
+export default function Section2() {
+  const [data, setData] = useState<MissionSection | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchMission() {
+      try {
+        const res = await fetch("/api/aboutUs/mission", { cache: "no-store" });
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch: ${res.status}`);
+        }
+
+        const json = await res.json();
+
+        const missionData = json.data?.mission_section?.[0] || null;
+        setData(missionData);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchMission();
+  }, []);
+
+  if (loading) return <div className="text-center py-16">Loading...</div>;
+  if (error) return <div className="text-center py-16 text-red-500">Error: {error}</div>;
+  if (!data) return <div className="text-center py-16">No Mission Data Found</div>;
+
+  const renderRichText = (blocks?: RichTextBlock[]) =>
+    blocks?.map((block, i) => (
+      <div key={i}>
+        {block.children?.map((child, j) => (
+          <p key={`${i}-${j}`} className={j > 0 ? "mt-4" : ""}>
+            {child.text}
+          </p>
+        ))}
+      </div>
+    ));
+
+  const imageUrl = data.image?.url
+    ? data.image.url.startsWith("http")
+      ? data.image.url
+      : `${process.env.NEXT_PUBLIC_STRAPI_URL}${data.image.url}`
+    : null;
+
+  return (
+    <section className="container mx-auto my-22 px-6 lg:px-20 ">
+      <div className="grid lg:grid-cols-2 gap-10 items-center">
+        <div>
+          {data.title && <h2 className="text-base md:text-xl text-[#6A6A6A] mb-3">{data.title}</h2>}
+          {data.heading && (
+            <div className="text-2xl md:text-3xl lg:text-4xl text-[#222222] leading-tight mb-6">
+              {renderRichText(data.heading)}
+            </div>
+          )}
+          {data.desc && (
+            <div className="text-base md:text-xl text-[#6A6A6A]">
+              {renderRichText(data.desc)}
+            </div>
+          )}
+        </div>
+
+        {imageUrl && (
+          <div className="flex justify-center">
+            <div className="w-full sm:max-w-[400px] md:max-w-[600px] md:max-h-[421] aspect-auto overflow-hidden shadow-lg">
+              <Image
+                src={imageUrl!}
+                alt={data.image?.alternativeText || "Mission image"}
+                width={data.image?.width || 600}
+                height={data.image?.height || 421}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+          </div>
+
+        )}
+      </div>
+    </section>
+  );
+}

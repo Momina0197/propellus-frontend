@@ -1,14 +1,19 @@
 import { NextResponse } from "next/server";
 
-const STRAPI_URL = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
+const STRAPI_URL =
+  process.env.STRAPI_URL ||
+  process.env.NEXT_PUBLIC_STRAPI_URL ||
+  "http://127.0.0.1:1337";
 const STRAPI_API_KEY = process.env.STRAPI_API_KEY;
 
 export async function GET() {
   try {
     const headers: HeadersInit = { "Content-Type": "application/json" };
-    if (STRAPI_API_KEY) headers["Authorization"] = `Bearer ${STRAPI_API_KEY}`;
+    if (STRAPI_API_KEY) {
+      headers["Authorization"] = `Bearer ${STRAPI_API_KEY}`;
+    }
 
-    const url = `${STRAPI_URL}/api/about-us?populate[aboutUs_heroSection][populate]=*`;
+    const url = `${STRAPI_URL}/api/ota?populate[heroSection][populate][logos][populate]=*`;
     const res = await fetch(url, { headers, cache: "no-store" });
 
     if (!res.ok) {
@@ -19,13 +24,14 @@ export async function GET() {
     }
 
     const strapiData = await res.json();
-    
-    const heroSectionData = strapiData.data?.aboutUs_heroSection || [];
+
+    const heroSection = strapiData.data?.heroSection || {};
 
     return NextResponse.json({
-      data: heroSectionData
+      data: {
+        heroSection,
+      },
     });
-    
   } catch (err) {
     return NextResponse.json(
       { error: "Server error", details: (err as Error).message },

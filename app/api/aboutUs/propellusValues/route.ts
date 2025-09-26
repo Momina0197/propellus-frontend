@@ -1,6 +1,10 @@
+// app/api/aboutUs/propellusValues/route.ts
 import { NextResponse } from "next/server";
 
-const STRAPI_URL = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
+const STRAPI_URL =
+  process.env.STRAPI_URL ||
+  process.env.NEXT_PUBLIC_STRAPI_URL ||
+  "http://127.0.0.1:1337";
 const STRAPI_API_KEY = process.env.STRAPI_API_KEY;
 
 export async function GET() {
@@ -8,7 +12,8 @@ export async function GET() {
     const headers: HeadersInit = { "Content-Type": "application/json" };
     if (STRAPI_API_KEY) headers["Authorization"] = `Bearer ${STRAPI_API_KEY}`;
 
-    const url = `${STRAPI_URL}/api/about-us?populate[aboutUs_heroSection][populate]=*`;
+    // Strapi endpoint with populate for creatingPropellusValues
+    const url = `${STRAPI_URL}/api/about-us?populate[creatingPropellusValues][populate]=*`;
     const res = await fetch(url, { headers, cache: "no-store" });
 
     if (!res.ok) {
@@ -19,13 +24,13 @@ export async function GET() {
     }
 
     const strapiData = await res.json();
-    
-    const heroSectionData = strapiData.data?.aboutUs_heroSection || [];
+
+    // Extract creatingPropellusValues from the Strapi response
+    const creatingPropellusValues = strapiData.data?.creatingPropellusValues || [];
 
     return NextResponse.json({
-      data: heroSectionData
+      data: creatingPropellusValues,
     });
-    
   } catch (err) {
     return NextResponse.json(
       { error: "Server error", details: (err as Error).message },

@@ -173,5 +173,8 @@ const SignupPage = () => {
     </div>
   );
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8d3da8c (worked on otas, terms and aboutUs page)
 export default SignupPage;

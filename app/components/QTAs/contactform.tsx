@@ -1,9 +1,37 @@
+
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+type RichTextChild = { type: string; text?: string };
+type RichTextBlock = { type: string; children?: RichTextChild[] };
+
+type Logo = {
+  id: number;
+  logoImage: {
+    id: number;
+    url: string;
+    name?: string;
+    alternativeText?: string | null;
+    width?: number;
+    height?: number;
+  };
+};
+
+type HeroSectionType = {
+  title: RichTextBlock[];
+  intro: RichTextBlock[];
+  desc: string;
+  logos: Logo[];
+};
+
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 
 const GetStartedComponent = () => {
+  const [data, setData] = useState<HeroSectionType | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const [form, setForm] = useState({
     yourName: "",
     companyName: "",
@@ -12,10 +40,22 @@ const GetStartedComponent = () => {
     message: "",
   });
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/otas/contactForm", { cache: "no-store" });
+        const json = await res.json();
+        if (json.data) setData(json.data);
+      } catch (err) {
+        console.error("Error fetching heroSection:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -25,79 +65,62 @@ const GetStartedComponent = () => {
     console.log("Form submitted:", form);
   };
 
+  const getImageUrl = (url: string) => (url.startsWith("http") ? url : `${STRAPI_URL}${url}`);
+
+  if (loading) return <div className="text-center py-16">Loading...</div>;
+
   return (
-    <section className="relative w-full bg-white py-16 px-6 lg:px-20 overflow-hidden shadow-lg">
-      {/* Background Vector 1 */}
+    <section className="relative w-full bg-white py-16 px-6 lg:px-20 overflow-hidden shadow-lg mb-22 ">
       <div
-        className="absolute inset-0 left-90  bg-no-repeat opacity-90"
+        className="absolute inset-0 left-90 bg-no-repeat opacity-90"
         style={{
           backgroundImage: `url('/images/Vector01.png')`,
-          backgroundSize: "120%", // 🔹 Larger size
-          backgroundPosition: "center 0px", // 🔹 Lower the vector
+          backgroundSize: "120%",
+          backgroundPosition: "center 0px",
         }}
       ></div>
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
         {/* Left Section */}
         <div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-snug">
-            Get started with Propellus
-          </h2>
-          <p className="mt-4 text-gray-600 text-lg">
-            Fill out this form and a specialist from our sales team will reach
-            out to you within minutes.
-          </p>
-          <p className="mt-6 text-sm text-gray-500">
-            TRUSTED BY LEADING TRAVEL AGENCIES
-          </p>
-          <div className="flex items-center gap-6 mt-4">
-            <Image
-              src="/images/image 147.png"
-              alt="Aeg"
-              width={80}
-              height={40}
-              className="opacity-50"
-            />
-            <Image
-              src="/images/image 149.png"
-              alt="Wego"
-              width={80}
-              height={40}
-              className="opacity-50"
-            />
-            <Image
-              src="/images/image 146.png"
-              alt="Gozayaan"
-              width={50}
-              height={20}
-              className="opacity-50"
-            />
-            <Image
-              src="/images/image 148.png"
-              alt="PrinceVisa"
-              width={80}
-              height={40}
-              className="opacity-50"
-            />
+          {data?.title?.map((block, i) =>
+            block.type === "paragraph" ? (
+              <h2 key={i} className="text-3xl lg:text-4xl font-bold text-gray-800 leading-snug">
+                {block.children?.map((child) => child.text).join("")}
+              </h2>
+            ) : null
+          )}
+          {data?.intro?.map((block, i) =>
+            block.type === "paragraph" ? (
+              <p key={i} className="mt-10 text-gray-600 text-lg md:text-xl">
+                {block.children?.map((child) => child.text).join("")}
+              </p>
+            ) : null
+          )}
+
+          <p className="mt-10 text-sm md:text-base text-gray-800">{data?.desc}</p>
+
+          <div className="flex items-center gap-16 mt-2 flex-wrap">
+            {data?.logos?.map((logo) => (
+              <Image
+                key={logo.id}
+                src={getImageUrl(logo.logoImage.url)}
+                alt={logo.logoImage.alternativeText || logo.logoImage.name || "logo"}
+                width={logo.logoImage.width || 80}
+                height={logo.logoImage.height || 50}
+                className="opacity-50 object-contain max-w-[80px] max-h-[50] brightness-0"
+              />
+            ))}
           </div>
         </div>
 
-        {/* Right Section (Form) */}
+        {/* Right Section (Form stays static) */}
         <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto text-center shadow-lg">
-          {/* Centered Heading */}
-          <h3 className="text-[28px] font-semibold text-black mb-4">
-            Tell us about you
-          </h3>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4 text-left">
-            {/* Name + Company Name in one row */}
+          <h3 className="text-[28px] font-semibold text-black mb-4">Tell us about you</h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label
-                  htmlFor="yourName"
-                  className="block text-xs font-medium text-gray-700 mb-1"
-                >
+                <label htmlFor="yourName" className="block text-xs font-medium text-gray-700 mb-1">
                   Your Name
                 </label>
                 <input
@@ -131,13 +154,9 @@ const GetStartedComponent = () => {
               </div>
             </div>
 
-            {/* Email + "We are" in one row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-xs font-medium text-gray-700 mb-1"
-                >
+                <label htmlFor="email" className="block text-xs font-medium text-gray-700 mb-1">
                   Email
                 </label>
                 <input
@@ -152,10 +171,7 @@ const GetStartedComponent = () => {
                 />
               </div>
               <div>
-                <label
-                  htmlFor="weAre"
-                  className="block text-xs font-medium text-gray-700 mb-1"
-                >
+                <label htmlFor="weAre" className="block text-xs font-medium text-gray-700 mb-1">
                   I/We are
                 </label>
                 <select
@@ -175,12 +191,8 @@ const GetStartedComponent = () => {
               </div>
             </div>
 
-            {/* Message */}
             <div>
-              <label
-                htmlFor="message"
-                className="block text-xs font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="message" className="block text-xs font-medium text-gray-700 mb-1">
                 Message
               </label>
               <textarea
@@ -194,7 +206,6 @@ const GetStartedComponent = () => {
               />
             </div>
 
-            {/* Colored Button */}
             <button
               type="submit"
               className="w-full bg-[#1C3F5D] text-white text-[16px] font-medium py-2 rounded-md hover:opacity-90 transition"
@@ -202,8 +213,6 @@ const GetStartedComponent = () => {
               Submit
             </button>
           </form>
-
-          {/* Terms Text Centered */}
           <p className="text-[12px] max-w-[350px] mx-auto text-gray-500 mt-3 leading-snug text-center">
             By submitting this form, you are agreeing to Propellus{" "}
             <a href="#" className="text-[#1C3F5D] font-semibold underline">
@@ -213,10 +222,9 @@ const GetStartedComponent = () => {
             <a href="#" className="text-[#1C3F5D] font-semibold underline">
               Terms of Service
             </a>
-            .
           </p>
         </div>
-      </div>
+        </div>
     </section>
   );
 };

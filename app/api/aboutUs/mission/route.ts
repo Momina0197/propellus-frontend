@@ -8,7 +8,7 @@ export async function GET() {
     const headers: HeadersInit = { "Content-Type": "application/json" };
     if (STRAPI_API_KEY) headers["Authorization"] = `Bearer ${STRAPI_API_KEY}`;
 
-    const url = `${STRAPI_URL}/api/about-us?populate[aboutUs_heroSection][populate]=*`;
+    const url = `${STRAPI_URL}/api/about-us?populate[mission_section][populate]=*`;
     const res = await fetch(url, { headers, cache: "no-store" });
 
     if (!res.ok) {
@@ -20,10 +20,13 @@ export async function GET() {
 
     const strapiData = await res.json();
     
-    const heroSectionData = strapiData.data?.aboutUs_heroSection || [];
+    // Correct path based on your Strapi response
+    const missionSectionData = strapiData.data?.mission_section || [];
 
     return NextResponse.json({
-      data: heroSectionData
+      data: {
+        mission_section: missionSectionData
+      }
     });
     
   } catch (err) {
