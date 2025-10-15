@@ -4,7 +4,6 @@ import Image from "next/image";
 import { FileText, Database, Frown, Upload, Bot, Globe } from "lucide-react";
 import { MediaItem } from "../../types/strapi";
 
-// Types matching your API
 interface TravelAgentProblem {
   heading: string;
   subheading1: string;

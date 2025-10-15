@@ -1,4 +1,4 @@
-// components/FAQ.jsx
+
 "use client";
 
 import React, { useState } from "react";
